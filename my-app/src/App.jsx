@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
-import EnvConfigModal from "./components/EnvConfigModal";
 import { Outlet } from "react-router-dom";
+import ConfigModal from "./components/ConfigModal";
 
 const App = () => {
   const [isMobile, setIsMobile] = useState(false);
-  const [openEnvModal, setOpenEnvModal] = useState(false);
+  const [openConfigModal, setOpenConfigModal] = useState(false);
 
   useEffect(() => {
     const checkScreen = () => setIsMobile(window.innerWidth < 767);
@@ -34,15 +34,15 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar onOpenEnvModal={() => setOpenEnvModal(true)} />
+      <Navbar onOpenConfigModal={() => setOpenConfigModal(true)} />
 
       <div className="p-6">
         <Outlet />
       </div>
 
-      <EnvConfigModal
-        open={openEnvModal}
-        onClose={() => setOpenEnvModal(false)}
+      <ConfigModal
+        open={openConfigModal}
+        onClose={() => setOpenConfigModal(false)}
       />
     </div>
   );

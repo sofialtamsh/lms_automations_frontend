@@ -1,7 +1,9 @@
 import { Modal, Input, Button } from "antd";
 import { useEffect, useState } from "react";
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 
-export default function EnvConfigModal({ open, onClose }) {
+
+export default function ConfigModal({ open, onClose }) {
   const apiUrl = import.meta.env.VITE_API_URL;
   const [form, setForm] = useState({
     MASAI_ADMIN_LMS_USER_EMAIL: "",
@@ -19,6 +21,15 @@ export default function EnvConfigModal({ open, onClose }) {
     "GOOGLE_SHEET_ID",
   ];
 
+  const [showPassword, setShowPassword] = useState({
+    MASAI_ADMIN_LMS_USER_PASSWORD: false,
+    MASAI_ASSESS_PLATFORM_USER_PASSWORD: false,
+  });
+
+  const toggleShow = (key) => {
+    setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState("");
@@ -26,22 +37,22 @@ export default function EnvConfigModal({ open, onClose }) {
   useEffect(() => {
     if (!open) return;
 
-    const fetchEnv = async () => {
+    const fetchConfig = async () => {
       try {
         setFetching(true);
-        const res = await fetch(`${apiUrl}/env/read`);
+        const res = await fetch(`${apiUrl}/config/read`);
         const data = await res.json();
         const filteredData = {};
         requiredKeys.forEach((key) => (filteredData[key] = data[key] || ""));
         setForm(filteredData);
       } catch (e) {
-        console.log("Failed to load env", e);
+        console.log("Failed to load config", e);
       } finally {
         setFetching(false);
       }
     };
 
-    fetchEnv();
+    fetchConfig();
   }, [open]);
 
   const handleChange = (e) =>
@@ -53,7 +64,7 @@ export default function EnvConfigModal({ open, onClose }) {
 
     try {
       setLoading(true);
-      const res = await fetch(`${apiUrl}/env/save`, {
+      const res = await fetch(`${apiUrl}/config/save`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -72,13 +83,13 @@ export default function EnvConfigModal({ open, onClose }) {
   };
 
   const handleReset = async () => {
-    await fetch(`${apiUrl}/env/reset`, { method: "POST" });
-    alert("♻️ Environment reset");
+    await fetch(`${apiUrl}/config/reset`, { method: "POST" });
+    alert("♻️ Config reset");
   };
 
   return (
     <Modal
-      title="Environment Configuration"
+      title="Configuration"
       open={open}
       onCancel={onClose}
       footer={[
@@ -104,19 +115,42 @@ export default function EnvConfigModal({ open, onClose }) {
         <p>Loading...</p>
       ) : (
         <>
-          {Object.keys(form).map((key) => (
-            <div key={key} className="mb-3">
-              <label className="block text-sm font-medium mb-1">{key}</label>
-              <Input
-                type={
-                  key.toLowerCase().includes("password") ? "password" : "text"
-                }
-                name={key}
-                value={form[key]}
-                onChange={handleChange}
-              />
-            </div>
-          ))}
+          {Object.keys(form).map((key) => {
+            const isPassword = key.toLowerCase().includes("password");
+            const show = showPassword[key];
+
+            return (
+              <div key={key} className="mb-3">
+                <label className="block text-sm font-medium mb-1">{key}</label>
+                <div style={{ position: "relative" }}>
+                  <Input
+                    type={isPassword && !show ? "password" : "text"}
+                    name={key}
+                    value={form[key]}
+                    onChange={handleChange}
+                    style={{ paddingRight: "40px" }}
+                  />
+
+                  {isPassword && (
+                    <span
+                      onClick={() => toggleShow(key)}
+                      style={{
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        color: "#555",
+                        fontSize: "16px",
+                      }}
+                    >
+                      {show ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </>
       )}
     </Modal>
