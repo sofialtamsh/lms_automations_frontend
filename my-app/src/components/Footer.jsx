@@ -4,7 +4,7 @@ import { GithubOutlined, GlobalOutlined, LinkedinOutlined } from "@ant-design/ic
 
 const { Text } = Typography;
 
-const AppFooter = () => {
+const Footer = () => {
   return (
     <div className="text-center flex items-center justify-center bg-white shadow-sm mt-10 p-2 gap-2">
       {/* Signature */}
@@ -44,4 +44,4 @@ const AppFooter = () => {
   );
 };
 
-export default AppFooter;
+export default Footer;
