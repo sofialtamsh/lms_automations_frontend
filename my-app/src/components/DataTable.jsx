@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Spin, message, Button } from "antd";
 
-const DataTable = ({ type, refreshKey }) => {
+const DataTable = ({ type, refreshKey, setTotalItems }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,10 +21,14 @@ const DataTable = ({ type, refreshKey }) => {
         const res = await fetch(
           `${apiUrl.replace(/\/+$/, "")}/api/get-automation-status?type=${type}`
         );
-        if (!res.ok) throw new Error("Failed to fetch");
+        if (!res.ok){ 
+          setTotalItems(0)
+          throw new Error("Failed to fetch");
+        }
 
         const result = await res.json();
         console.log("🚀 Backend result:", result);
+        setTotalItems(result.total)
 
         const items = result.data || [];
 
@@ -88,7 +92,7 @@ const DataTable = ({ type, refreshKey }) => {
             redisId: record.redisId,
             title: record.title,
             field: backendField,
-            newValue: "true",
+            newValue: "yes",
           }),
         }
       );

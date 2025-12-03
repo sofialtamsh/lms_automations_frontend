@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import { Outlet } from "react-router-dom";
 import ConfigModal from "./components/ConfigModal";
+import AppFooter from "./components/AppFooter";
 
 const App = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -44,6 +45,7 @@ const App = () => {
         open={openConfigModal}
         onClose={() => setOpenConfigModal(false)}
       />
+      <AppFooter/>
     </div>
   );
 };

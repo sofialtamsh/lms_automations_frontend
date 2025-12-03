@@ -5,6 +5,7 @@ import DataTable from "../components/DataTable";
 
 const Dashboard = () => {
   const [params] = useSearchParams();
+  const [totalItems, setTotalItems]=useState(0)
   const type = params.get("type"); 
   const navigate = useNavigate();
 
@@ -27,7 +28,7 @@ const Dashboard = () => {
           {type === "assignments" ? "Assignments" : "Lectures"} Automation
         </h1>
         <div className="text-sm text-gray-500">
-          Type: <span className="font-medium">{type}</span>
+          Total {type}: <span className="font-medium">{totalItems}</span>
         </div>
       </div>
 
@@ -38,7 +39,7 @@ const Dashboard = () => {
         setLoadingAction={setLoadingAction}
       />
 
-      <DataTable key={refreshKey} type={type} refreshKey={refreshKey} />
+      <DataTable key={refreshKey} type={type} refreshKey={refreshKey} setTotalItems={setTotalItems} />
     </div>
   );
 };
